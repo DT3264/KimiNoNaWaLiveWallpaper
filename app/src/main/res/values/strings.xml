@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Your Name Live Wallpaper</string>
+    <string name="leftSide">Left Side</string>
+    <string name="rightSide">Right Side</string>
+</resources>
