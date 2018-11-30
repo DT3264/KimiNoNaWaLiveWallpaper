@@ -4,6 +4,7 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.service.wallpaper.WallpaperService;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -97,7 +98,8 @@ public class DynamicWallPaper extends WallpaperService{
 
         private void initMediaPlayer(SurfaceHolder holder){
             mediaPlayer = new MediaPlayer();
-            String yourName = getBaseContext().getSharedPreferences("Default", MODE_PRIVATE).getString("Name", "Taki");
+            String yourName = "";
+            yourName = getBaseContext().getSharedPreferences("Default", MODE_PRIVATE).getString("Name", "Taki");
             String vidName="";
             if(yourName.equals("Taki")) vidName = "left.mp4";
             else if(yourName.equals("Mitsuhara")) vidName = "right.mp4";
@@ -107,18 +109,20 @@ public class DynamicWallPaper extends WallpaperService{
                 mediaPlayer.setDataSource(fileDescriptor.getFileDescriptor(), fileDescriptor.getStartOffset(), fileDescriptor.getLength());
                 mediaPlayer.setSurface(holder.getSurface());
                 mediaPlayer.prepare();
-                mediaPlayer.setLooping(true);
+                mediaPlayer.setLooping(false);
                 mediaPlayer.setVolume(0, 0);
                 mediaPlayer.prepare();
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                    }
-                });
             }catch (Exception e){
                 e.printStackTrace();
             }
-
+            ///For some reason inside of the try block, the Listener doesn't work
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    isActive=false;
+                    mp.seekTo(0);
+                }
+            });
         }
 
         @Override
